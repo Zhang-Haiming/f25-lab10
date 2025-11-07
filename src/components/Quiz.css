@@ -58,9 +58,8 @@ Hint: You can use the className attribute for highlighting. */
     border-radius: 5px;
   }
   
-  /* Submit button styles */
+  /* Base button styles */
   button {
-    background-color: #3498db;
     color: white;
     font-size: 18px;
     border: none;
@@ -71,8 +70,18 @@ Hint: You can use the className attribute for highlighting. */
     transition: background-color 0.2s;
   }
   
-  button:hover {
-    background-color: #1f77c5;
+  .submit-button:hover {
+    background-color: #c0392b;
+  }
+
+  .next-button:hover {
+    background-color: #2980b9;
+  }
+  
+  /* Disabled button */
+  button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
   }
   
   /* Score styles */
