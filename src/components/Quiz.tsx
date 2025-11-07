@@ -14,28 +14,14 @@ interface QuizState {
 const Quiz: React.FC = () => {
   // TODO: Task1 - Seprate the logic of quiz from the UI.
   // Hint: Take advantage of QuizCore to manage quiz state separately from the UI.
-  const quizCore = new QuizCore();
-  const initialQuestions: QuizQuestion[] = [quizCore.getCurrentQuestion()!];
+  const [quizCore] = useState(() => new QuizCore()); // Create once and reuse
+  
   const [state, setState] = useState<QuizState>({
-    questions: initialQuestions,
-    currentQuestionIndex: 0,  // Initialize the current question index.
-    selectedAnswer: null,  // Initialize the selected answer.
-    score: 0,  // Initialize the score.
+    questions: [],
+    currentQuestionIndex: 0,
+    selectedAnswer: null,
+    score: 0,
   });
-
-  // const initialQuestions: QuizQuestion[] = [
-  //   {
-  //     question: 'What is the capital of France?',
-  //     options: ['London', 'Berlin', 'Paris', 'Madrid'],
-  //     correctAnswer: 'Paris',
-  //   },
-  // ];
-  // const [state, setState] = useState<QuizState>({
-  //   questions: initialQuestions,
-  //   currentQuestionIndex: 0,  // Initialize the current question index.
-  //   selectedAnswer: null,  // Initialize the selected answer.
-  //   score: 0,  // Initialize the score.
-  // });
 
   const handleOptionSelect = (option: string): void => {
     setState((prevState) => ({ ...prevState, selectedAnswer: option }));
@@ -45,16 +31,39 @@ const Quiz: React.FC = () => {
   const handleButtonClick = (): void => {
     // TODO: Task3 - Implement the logic for button click ("Next Question" and "Submit").
     // Hint: You might want to check for a function in the core logic to help with this.
-  } 
+    
+    // Record the answer
+    if (state.selectedAnswer) {
+      quizCore.answerQuestion(state.selectedAnswer);
+    }
+    
+    if(quizCore.hasNextQuestion()) {
+      quizCore.nextQuestion();
+      setState((prevState) => ({
+        ...prevState,
+        currentQuestionIndex: prevState.currentQuestionIndex + 1,
+        selectedAnswer: null,
+        score: quizCore.getScore()
+      }));
+    } else {
+      // Quiz completed
+      setState((prevState) => ({
+        ...prevState,
+        score: quizCore.getScore(),
+        currentQuestionIndex: quizCore.getTotalQuestions() // This ensures we show completion
+      }));
+    }
+  }
 
-  const { questions, currentQuestionIndex, selectedAnswer, score } = state;
-  const currentQuestion = questions[currentQuestionIndex];
+  const { currentQuestionIndex, selectedAnswer, score } = state;
+  const currentQuestion = quizCore.getCurrentQuestion();
 
-  if (!currentQuestion) {
+  // Check if quiz is completed
+  if (!currentQuestion || currentQuestionIndex >= quizCore.getTotalQuestions()) {
     return (
       <div>
         <h2>Quiz Completed</h2>
-        <p>Final Score: {score} out of {questions.length}</p>
+        <p>Final Score: {score} out of {quizCore.getTotalQuestions()}</p>
       </div>
     );
   }
@@ -80,7 +89,13 @@ const Quiz: React.FC = () => {
       <h3>Selected Answer:</h3>
       <p>{selectedAnswer ?? 'No answer selected'}</p>
 
-      <button onClick={handleButtonClick}>Next Question</button>
+      <button 
+        onClick={handleButtonClick} 
+        disabled={!selectedAnswer}
+        className={quizCore.hasNextQuestion() ? 'next-button' : 'submit-button'}
+      >
+        {quizCore.hasNextQuestion() ? 'Next Question' : 'Submit'}
+      </button>
     </div>
   );
 };
