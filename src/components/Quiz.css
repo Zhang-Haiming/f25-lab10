@@ -2,11 +2,18 @@
 TODO: Enhance User Experience by adding visual highlights to selected answers.
 Hint: You can use the className attribute for highlighting. */
 .selected {
-    cursor: pointer; /* Change cursor on hover for interactivity */
+    background-color: #3498db !important;
+    color: white !important;
+    border: 2px solid #2980b9 !important;
+    font-weight: bold;
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    transition: all 0.2s ease;
   }
   
   /* Additional styling for better user experience */
   .selected:hover {
+    background-color: #2980b9 !important;
     cursor: pointer;
   }
   
@@ -32,6 +39,7 @@ Hint: You can use the className attribute for highlighting. */
   p {
     font-size: 18px;
     margin: 10px 0;
+    text-align: left;
   }
   
   /* Answer Options styles */
@@ -43,6 +51,7 @@ Hint: You can use the className attribute for highlighting. */
   li {
     cursor: pointer;
     font-size: 16px;
+    /*font-weight: bold;*/
     padding: 8px;
     margin: 4px 0;
     border: 1px solid #ccc;
